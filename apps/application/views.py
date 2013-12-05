@@ -7,12 +7,12 @@ from django.shortcuts import redirect
 
 
 agiliq = OAuth2Service(
-    client_id='121',
-    client_secret='121',
+    client_id='<my_client_id>',
+    client_secret='<my_client_secret>',
     name='agiliq',
-    authorize_url='http://10.42.0.04:8000/oauth/authorize',
-    access_token_url='http://10.42.0.04:8000/oauth/access_token/',
-    base_url='http://10.42.0.04:8000/')
+    authorize_url='http://join.agiliq.com/oauth/authorize/',
+    access_token_url='http://join.agiliq.com/oauth/access_token/',
+    base_url='http://join.agiliq.com/')
 
 
 def authorize(request):
@@ -50,17 +50,17 @@ def get_access_token(request):
 
 def upload_resume(request):
     access_token = request.session.get('access_token','')
-    resume = open('/home/uzhare/Desktop/howto-pyporting.pdf', 'rb')
+    resume = open('<path_to_my_resume>', 'rb')
     
     data = {    'first_name': 'Uzhare',
                 'last_name': 'Farooq',
                 'projects_url': 'https://github.com/uzhare',
-                'code_url': 'https://github.com/warisamin/job.agiliq',
+                'code_url': 'https://github.com/uzhare/job-agiliq',
                 }
     
-    files = { 'resume' : ('resume.pdf', resume)}
+    files = { 'resume' : ('uzhare_resume.pdf', resume)}
     
-    url = 'http://10.42.0.04:8000/api/resume/upload/?access_token=%s' % access_token
+    url = 'http://join.agiliq.com/api/resume/upload/?access_token=%s' % access_token
     final_post = requests.post(url, data=data, files = files)
     
     return HttpResponseRedirect('http://10.42.0.04:8000/accounts/profile')

@@ -15,10 +15,10 @@ agiliq = OAuth2Service(
     base_url='http://join.agiliq.com/')
 
 
+# View to authorize app
 def authorize(request):
 
     redirect_uri = 'http://127.0.0.1:8000/join/access_token'
-    
     params = {'redirect_uri': redirect_uri,
             'response_type': 'code'}
     
@@ -27,8 +27,9 @@ def authorize(request):
     return  HttpResponseRedirect(url)
 
 
-
+# View to get access token
 def get_access_token(request):
+    # Authorization code from authorize view
     authorize_code = request.GET['code']
     redirect_uri = 'http://127.0.0.1:8000/join/access_token'
     
@@ -38,16 +39,16 @@ def get_access_token(request):
         }
     
     response = agiliq.get_raw_access_token(data=data)
-    
+    # We have raw access token in response
     json_data =  response.json()
-
+    # Retreive access token from json data.
     access_token = json_data['access_token']
     request.session['access_token'] = access_token
 
     return redirect(reverse('upload'))
 
 
-
+# View to upload resume and personal infromation.
 def upload_resume(request):
     access_token = request.session.get('access_token','')
     resume = open('<path_to_my_resume>', 'rb')
@@ -63,4 +64,4 @@ def upload_resume(request):
     url = 'http://join.agiliq.com/api/resume/upload/?access_token=%s' % access_token
     final_post = requests.post(url, data=data, files = files)
     
-    return HttpResponseRedirect('http://10.42.0.04:8000/accounts/profile')
+    return HttpResponseRedirect('http://join.agiliq.com/accounts/profile')
